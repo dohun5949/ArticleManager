@@ -7,18 +7,19 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+    static List<Article> articleList = new ArrayList<>();
     public static void main(String[] args) {
 
 //        LocalDateTime now = LocalDateTime.now();
 //        String date = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 //        System.out.println(date);
-
+        makeTestData();
         Scanner sc = new Scanner(System.in);
 
         System.out.println("== 프로그램 시작 ==");
 
-        int lastId = 0;
-        List<Article> articleList = new ArrayList<>();
+        int lastId = 3;
+
 
         while (true) {
             LocalDateTime now = LocalDateTime.now();
@@ -164,4 +165,11 @@ public class Main {
         sc.close();
 
     }
+    private static void makeTestData(){
+        System.out.println("테스트 데이터 생성됨");
+        articleList.add(new Article(1, "제목1" , "내용1", "2025-08-31", Util.getNow()));
+        articleList.add(new Article(2, "제목2" , "내용2", "2025-08-31", Util.getNow()));
+        articleList.add(new Article(3, "제목3" , "내용3", "2025-08-31", Util.getNow()));
+    }
 }
+
