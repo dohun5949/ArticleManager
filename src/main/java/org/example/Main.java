@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 public class Main {
     static List<Article> articleList = new ArrayList<>();
+
     public static void main(String[] args) {
 
 //        LocalDateTime now = LocalDateTime.now();
@@ -47,16 +48,32 @@ public class Main {
                 articleList.add(article);
                 System.out.println(lastId + "번 글이 생성되었습니다.");
 
-            } else if (cmd.equals("article list")) {
+            } else if (cmd.startsWith("article list")) {
                 System.out.println("번호 / 제목 / 내용  / 등록일자");
-                if(articleList.size() == 0){
+                if (articleList.size() == 0) {
                     System.out.println("게시글이 없습니다.");
                     continue;
                 }
-                for (int i = articleList.size() - 1; i >= 0; --i) {
-                    Article article = articleList.get(i);
+                String keyword = cmd.substring("article list".length()).trim();
+                List<Article> lst = articleList;
+
+                if(keyword.length()>0){
+                    lst = new ArrayList<>();
+                    System.out.println("검색어 : " + keyword);
+                    for(Article article : articleList){
+                        if(article.getTitle().contains(keyword)){
+                            lst.add(article);
+                        }
+                    }
+                    if(lst.size()==0){
+                        System.out.println("검색 결과 없음");
+                        continue;
+                    }
+                }
+                for (int i = lst.size() - 1; i >= 0; --i) {
+                    Article article = lst.get(i);
                     if (article.getBody().length() < 10) {
-                        System.out.println(article.getId() + " / " + article.getTitle() + " / " + article.getBody() + " / "+ article.getRegDate());
+                        System.out.println(article.getId() + " / " + article.getTitle() + " / " + article.getBody() + " / " + article.getRegDate());
                     } else {
                         System.out.println(article.getId() + " / " + article.getTitle() + " / " + article.getBody().substring(0, 10) + " / " + article.getRegDate());
                     }
@@ -67,16 +84,9 @@ public class Main {
                 String[] str = cmd.split(" ");
                 int num = Integer.parseInt(str[2]);
 
-                Article a = null;
-                for(Article article : articleList){
-                    if(article.getId() == num){
-                        a = article;
-                        break;
-                    }
-                }
+                Article a = ArticleById(num);
                 if(a == null){
-                    System.out.println("해당 게시글은 없습니다.");
-                    continue;
+                    System.out.println(num + "번 글은 없습니다.");
                 }
                 System.out.println("등록일 : " + a.getRegDate());
                 System.out.println("수정일 : " + a.getUpdateDate());
@@ -132,17 +142,11 @@ public class Main {
                 }
                 int index = -1;
 
-                Article a = null;
-                for (int i = 0; i < articleList.size(); i++) {
-                    if (articleList.get(i).getId() == num) {
-                        a = articleList.get(i);
-                        break;
-                    }
+                Article a = ArticleById(num);
+                if(a == null){
+                    System.out.println(num + "번 글은 없습니다.");
                 }
-                if (a == null) {
-                    System.out.println(num + "번 게시글은 없습니다.");
-                    continue;
-                }
+
                 System.out.println("기존 제목 : " + a.getTitle());
                 System.out.println("기존 내용 : " + a.getBody());
 
@@ -165,11 +169,25 @@ public class Main {
         sc.close();
 
     }
-    private static void makeTestData(){
+
+    private static void makeTestData() {
         System.out.println("테스트 데이터 생성됨");
-        articleList.add(new Article(1, "제목1" , "내용1", "2025-08-31", Util.getNow()));
-        articleList.add(new Article(2, "제목2" , "내용2", "2025-08-31", Util.getNow()));
-        articleList.add(new Article(3, "제목3" , "내용3", "2025-08-31", Util.getNow()));
+        articleList.add(new Article(1, "제목1", "내용1", "2025-08-31", Util.getNow()));
+        articleList.add(new Article(2, "제목2", "내용2", "2025-08-31", Util.getNow()));
+        articleList.add(new Article(3, "제목3", "내용3", "2025-08-31", Util.getNow()));
+    }
+
+    private static Article ArticleById(int num) {
+
+        for (Article article : articleList) {
+            if (article.getId() == num) {
+                return article;
+            }
+        }
+        System.out.println("해당 게시글은 없습니다.");
+        return null;
+
+
     }
 }
 
